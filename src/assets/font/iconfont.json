@@ -1,0 +1,65 @@
+{
+  "id": "2261822",
+  "name": "vueproject",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "16885206",
+      "name": "用户",
+      "font_class": "ziyuan111",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "827650",
+      "name": "评论",
+      "font_class": "pinglun",
+      "unicode": "e664",
+      "unicode_decimal": 58980
+    },
+    {
+      "icon_id": "3758850",
+      "name": "商铺",
+      "font_class": "shangpu",
+      "unicode": "e6a8",
+      "unicode_decimal": 59048
+    },
+    {
+      "icon_id": "6607924",
+      "name": "食物",
+      "font_class": "shiwu",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
+      "icon_id": "15388515",
+      "name": "管理员",
+      "font_class": "guanliyuan",
+      "unicode": "e650",
+      "unicode_decimal": 58960
+    },
+    {
+      "icon_id": "7629060",
+      "name": "列表",
+      "font_class": "liebiao",
+      "unicode": "e6b6",
+      "unicode_decimal": 59062
+    },
+    {
+      "icon_id": "1279441",
+      "name": "密码",
+      "font_class": "mima",
+      "unicode": "e660",
+      "unicode_decimal": 58976
+    },
+    {
+      "icon_id": "10392614",
+      "name": "登录",
+      "font_class": "denglu",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    }
+  ]
+}
