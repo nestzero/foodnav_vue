@@ -6,6 +6,20 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "11758149",
+      "name": "进入",
+      "font_class": "jinru",
+      "unicode": "e74b",
+      "unicode_decimal": 59211
+    },
+    {
+      "icon_id": "129004",
+      "name": "home",
+      "font_class": "home",
+      "unicode": "e7c7",
+      "unicode_decimal": 59335
+    },
+    {
       "icon_id": "16885206",
       "name": "用户",
       "font_class": "ziyuan111",

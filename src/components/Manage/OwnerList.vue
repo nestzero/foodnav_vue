@@ -50,13 +50,17 @@
         <el-form-item label="地址" prop="addr">
           <el-input v-model="addForm.addr"></el-input>
         </el-form-item>
+        <!-- 店面图 -->
+        <!-- <el-form-item label="添加图片" ref="uploadElement" prop="img">          
+          <el-input v-model="addForm.img" v-if="false"></el-input>
+        </el-form-item> -->
         <!-- 密码 -->
         <el-form-item label="电话" prop="tel">
           <el-input v-model="addForm.tel"></el-input>
         </el-form-item>
         <!-- 昵称 -->
         <el-form-item label="昵称" prop="realname">
-          <el-input v-model="addForm.realname"></el-input>
+          <el-input v-model="addForm.realname" ></el-input>
         </el-form-item>
         
       </el-form>
@@ -96,6 +100,13 @@ export default {
     this.getOwnerList();
   },
   data(){
+    const checkRealname=(rule,value,callback)=>{
+      if(value===""||value===null){
+        return callback(new Error("请输入商家昵称"));
+      }else{
+        this.checkRealnameRight(value,callback);
+      }  
+    }
     return{
       // 查询信息实体
       queryInfo:{
@@ -116,11 +127,10 @@ export default {
       editForm:{},
       // 显示或隐藏修改商家信息
       editDialogVisible:false,
-
       // 添加商家表单验证
       addFormRules:{
         addr:[
-          { required: true, message: '请输入地址', trigger: 'blur' },
+          { required: true,message:'请输入地址',trigger: 'blur'},
           { min: 5, max: 12, message: '长度在 5 到 12 个字符', trigger: 'blur' }
         ],
         tel:[
@@ -128,8 +138,8 @@ export default {
           { min: 7, max: 14, message: '长度在 7 到 14 个字符', trigger: 'blur' }
         ],
         realname:[
-          { required: true, message: '请输入昵称/需要和用户昵称一致', trigger: 'blur' },
-          { min: 5, max: 12, message: '长度在 5 到 12 个字符', trigger: 'blur' }
+          { required: true,trigger: 'blur',validator:checkRealname},
+          { min: 2, max: 12, message: '长度在 2 到 12 个字符', trigger: 'blur' }
         ],
       },
       //修改商家表单验证
@@ -168,16 +178,46 @@ export default {
     },
     // 添加商家
     addOwner(){
-      this.$refs.addFormRef.validate(async valid=>{
-        if(!valid) return;
-        const {data:res} = await this.$http.post("addOwner",this.addForm);
-        if(res!="success"){
-          return this.$message.error("操作失败!");
+      if(this.checkRealnameUnique()!=true){
+        
+      }else{
+        this.$refs.addFormRef.validate(async valid=>{
+          if(!valid) return;
+          const {data:res} = await this.$http.post("addOwner",this.addForm);
+          if(res!="success"){
+            return this.$message.error("操作失败!");
+          }
+          this.$message.success("操作成功!");
+          this.addDialogVisible=false;
+          this.getOwnerList();
+        });
+      }     
+    },
+    // 添加商家时进行昵称唯一性验证
+    async checkRealnameUnique(){
+      try{
+        const {data:res}= await this.$http.post("ownerOr?realname="+this.addForm.realname);
+        if(res==="error"){
+          return this.$message.error("该账号已存在商家信息");
+        }else{
+          return true;
         }
-        this.$message.success("操作成功!");
-        this.addDialogVisible=false;
-        this.getOwnerList();
-      });
+      }catch(e){
+
+      }
+    },
+    // 添加商家时进行昵称存在验证
+    async checkRealnameRight(value,callback){
+      try{
+        const {data:res}= await this.$http.post("registerOwner?realname="+this.addForm.realname);
+        if(res==="error"){
+          return callback(new Error("请输入与商家账号昵称一致的内容"));
+        }else{
+          callback();
+        }
+      }catch(e){
+
+      }
     },
     // 删除商家
     async deleteOwner(oid){

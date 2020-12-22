@@ -49,8 +49,8 @@
       <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
         <!-- 用户 -->
         <el-form-item label="用户" prop="username">
-          <el-input v-model="addForm.username"></el-input>
-        </el-form-item>
+          <el-input v-model.lazy="addForm.username"></el-input>
+        </el-form-item>    
         <!-- 密码 -->
         <el-form-item label="密码" prop="password">
           <el-input v-model="addForm.password"></el-input>
@@ -70,7 +70,6 @@
         <el-button @click="addDialogVisible = false">取消</el-button>
       </span>
     </el-dialog>
-
     <!-- 修改对话框 -->
     <el-dialog title="修改用户信息" :visible.sync="editDialogVisible" width="50%" @close="editDialogClosed">
       <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
@@ -105,6 +104,30 @@ export default {
     this.getUserList();
   },
   data(){
+    // 用户名查重验证
+    const checkUsername=(rule,value,callback)=>{
+      if(value === "" || value === null){
+        return callback(new Error("请输入用户名"));
+      }else {
+        this.checkUsernameUnique(value,callback);
+      }
+    };
+    // 权限输入验证
+    const checkRoot=(rule,value,callback)=>{
+      if(value === "" || value === null){
+        return callback(new Error("请输入权限"));
+      }else {
+        this.checkRootRight(value,callback);
+      }
+    }
+    // 昵称查重验证
+    const checkRealname=(rule,value,callback)=>{
+      if(value === "" || value === null){
+        return callback(new Error("请输入昵称"));
+      }else{
+        this.checkEditRealnameUnique(value,callback);
+      }
+    }
     return{
       //查询信息实体
       queryInfo:{
@@ -112,7 +135,7 @@ export default {
         pageNum: 1,//当前页
         pageSize: 5,//每页最大数
       },
-      userList:[],//用户列表
+      userList:[],//用户列表      
       total:0,//总记录数
       addDialogVisible:false, //对话框状态
       //添加表单信息
@@ -126,23 +149,22 @@ export default {
       editForm:{},
       //显示或隐藏修改用户栏
       editDialogVisible:false,
-
       // 添加用户表单验证
       addFormRules: {
           username: [
-            { required: true, message: '请输入用户', trigger: 'blur' },
-            { min: 5, max: 12, message: '长度在 5 到 12 个字符', trigger: 'blur' }
+            { required: true,trigger: 'blur',validator:checkUsername},
+            { min: 5, max: 12, message: '长度在 5 到 12 个字符', trigger: 'blur' },
           ],
           password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
+            { required: true, message: '请输入密码', trigger: 'blur'},
             { min: 6, max: 14, message: '长度在 6 到 14 个字符', trigger: 'blur' }
           ],
           realname: [
-            { required: true, message: '请输入昵称', trigger: 'blur' },
-            { min: 5, max: 12, message: '长度在 5 到 12 个字符', trigger: 'blur' }
+            { required: true, trigger: 'blur',validator:checkRealname},
+            { min: 2, max: 12, message: '长度在 2 到 12 个字符', trigger: 'blur' }
           ],
           root: [
-            { required: true, message: '请输入用户权限', trigger: 'blur' },
+            { required: true, trigger: 'blur',validator:checkRoot},
             { min: 0, max: 1, message: '商家权限为2，普通用户权限为3', trigger: 'blur' }
           ],
       },
@@ -153,8 +175,8 @@ export default {
             { min: 6, max: 14, message: '长度在 6 到 14 个字符', trigger: 'blur' }
           ],
           realname: [
-            { required: true, message: '请输入昵称', trigger: 'blur' },
-            { min: 5, max: 12, message: '长度在 5 到 12 个字符', trigger: 'blur' }
+            { required: true, trigger: 'blur',validator:checkRealname},
+            { min: 2, max: 12, message: '长度在 2 到 12 个字符', trigger: 'blur' }
           ],       
       },
     }
@@ -164,7 +186,7 @@ export default {
     async getUserList(){
        const {data:res} = await this.$http.get("allUser",{params:this.queryInfo});
        this.userList=res.data;//用户列表数据封装
-       this.total=res.numbers;//总用户数封装
+       this.total=res.numbers;//总用户数封装         
     },
     // 最大数
     handleSizeChange(newSize){
@@ -193,9 +215,60 @@ export default {
         this.getUserList();
       });    
     },
+    // 添加用户时进行用户名重复验证
+    async checkUsernameUnique(value,callback){
+      try{
+        const {data:res}=await this.$http.post("registerUser?username="+value);
+        if(res==="error"){
+          return callback(new Error("请输入唯一用户名"));
+        }else{
+          callback();
+        }
+        
+      }catch(e){
+
+      }
+    },
+    // 权限验证
+    checkRootRight(value,callback){
+      try{
+        if(this.addForm.root==2||this.addForm.root==3){
+          callback();
+        }else{
+          return callback(new Error("请输入正确的权限分配，商家为2，学生为3"));
+        }
+      }catch(e){
+
+      }
+    },
+    // 添加用户时进行昵称重复验证
+    async checkRealnameUnique(value,callback){
+      try{
+        const {data:res}= await this.$http.post("checkUser?realname="+this.addForm.realname);
+        if(res==="error"){
+          return callback(new Error("请输入唯一昵称"));
+        }else{
+          callback();
+        }
+      }catch(e){
+
+      }
+    },
+    // 修改用户时进行昵称重复验证
+    async checkEditRealnameUnique(value,callback){
+      try{
+        const {data:res}= await this.$http.post("checkUser?realname="+this.editForm.realname);
+        if(res==="error"){
+          return callback(new Error("请输入唯一昵称"));
+        }else{
+          callback();
+        }
+      }catch(e){
+
+      }
+    },
     // 根据uid删除用户
     async deleteUser(uid){
-      console.log(uid);
       const confirmResult = await this.$confirm('此操作将永久删除用户，是否继续?','提示',{
         confirmButtonText:'确定',
         cancelButtonText:'取消',
@@ -212,10 +285,9 @@ export default {
       this.$message.success("删除成功!");
       this.getUserList();
     },
-
     // 显示对话框
     async showEditDialog(uid){
-      const {data:res} =await this.$http.get("/getUpdate?uid="+uid);
+      const {data:res} =await this.$http.get("/getUpdateUser?uid="+uid);
       this.editForm=res;//查询出用户信息反填回编辑表单中
       this.editDialogVisible=true;//开启编辑对话框
     },
@@ -229,7 +301,7 @@ export default {
         if(!valid) return;
         //发起修改请求
         const {data:res} = await this.$http.post("editUser",this.editForm);
-        console.log(res);
+        
         if(res!="success")return this.$message.error("操作失败!");
         this.$message.success("操作成功!");
         //隐藏修改对话框
@@ -237,8 +309,7 @@ export default {
         this.getUserList(); 
       })
     },
-  }
-
+  },
 }
 </script>
 <style  lang="less" scoped>

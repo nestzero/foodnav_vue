@@ -5,6 +5,12 @@ import Page from '../components/Page.vue'//引入Page组件
 import PageMain from '../components/PageMain.vue'//引入PageMain组件
 import UserList from '../components/Manage/UserList.vue'//引入UserList组件
 import OwnerList from '../components/Manage/OwnerList.vue'//引入ownerList组件
+import IndexPage from '../components/Index/IndexPage.vue'//引入前台首页组件
+import OwnerPage from '../components/Index/OwnerPage.vue'//引入商家菜单页面
+import CommitList from '../components/Manage/CommitList.vue'//引入评论列表页面
+import  PageOwner from '../components/PageOwner.vue'//引入商家界面
+import FoodList from '../components/Manage/FoodList.vue'//引入商家列表
+import PageOwnerMain from '../components/PageOwnerMain.vue'
 
 Vue.use(VueRouter)
 
@@ -12,19 +18,37 @@ const routes = [
   {
     path:"/",
     redirect:"/login"
-  },
+  }, 
   {
     path:"/login",
     component:Login,
   },
   {
+    path:"/indexPage",
+    component:IndexPage
+  },
+  {
+    path:"/ownerPage",
+    component:OwnerPage
+  },
+  {
+    path:"/pageOwner",
+    component:PageOwner,
+    redirect:"/pageOwnerMain",
+    children:[
+      {path:"/pageOwnerMain",component:PageOwnerMain},
+      {path:"/foodlist",component:FoodList},
+    ]
+  },
+  {
     path:"/page",
     component:Page,
-    redirect:"/pageMain",
+    redirect:"/pageMain",    
     children:[
       {path:"/pageMain",component:PageMain},
       {path:"/userlist",component:UserList},
-      {path:"/ownerlist",component:OwnerList}
+      {path:"/ownerlist",component:OwnerList},
+      {path:"/commitlist",component:CommitList}
     ]
   },
 ]
@@ -48,7 +72,7 @@ router.beforeEach((to,from,next)=>{
   if(to.path=='/login') return next();
   //获取user
   const userFlag=window.sessionStorage.getItem("user");//取出当前用户
-  if(!userFlag) return next('/login'); //无值，返回登录页
+  if(!userFlag) return next('/login'); //无值，回到首页
   next();//符合要求 放行
 })
 

@@ -6,10 +6,11 @@
         <el-header>
           <!-- 管理员logo -->
           <span class="iconfont icon-guanliyuan">网站后台管理</span>
+          <!-- 前台首页跳转 -->
+          <el-button type="info" @click="indexPage">进入前台</el-button>
           <!-- 注销按钮 -->
           <el-button type="info" @click="logout">注销</el-button>
         </el-header>
-
         <!-- 主体 -->
         <el-container>
             <!-- 侧边栏 -->
@@ -22,7 +23,7 @@
                   <!--商家管理-->
                   <el-menu-item index="/ownerlist" class="iconfont icon-shangpu" @click="saveNavState('/ownerlist')">商家管理</el-menu-item>
                   <!-- 评论管理 -->
-                  <el-menu-item index="/comment" class="iconfont icon-pinglun" @click="saveNavState('/comment')">评论管理</el-menu-item>                 
+                  <el-menu-item index="/commitlist" class="iconfont icon-pinglun" @click="saveNavState('/commentlist')">评论管理</el-menu-item>                 
               </el-menu>
             </el-aside>
             <!-- 主体内容 -->
@@ -50,10 +51,14 @@ export default {
     this.activePath=window.sessionStorage.getItem('activePath');//取出session里的path，动态修改
   },
   methods:{
+      // 首页跳转
+      indexPage(){
+        this.$router.push("/indexPage");//回到前台首页
+      },
       //注销完成
       logout(){
           window.sessionStorage.clear();//清除session
-          this.$router.push("/login");//回到首页
+          this.$router.push("/login");//回到登录界面
       },
       //获取导航菜单方法
       async getMenuList(){

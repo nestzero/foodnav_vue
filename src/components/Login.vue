@@ -37,8 +37,8 @@ export default {
   data(){
     return{
       loginForm:{
-        username:"admin",
-        password:"123456",
+        username:"",
+        password:"",
       },
       //验证对象
       loginRules:{
@@ -50,7 +50,7 @@ export default {
         //校验密码
         password:[
             { required: true, message: '请输入用户密码', trigger: 'blur' },//必填验证
-            { min: 6, max: 12, message: '长度在 6 到 12 个字符', trigger: 'blur' }//长度验证
+            { min: 6, max: 14, message: '长度在 6 到 14 个字符', trigger: 'blur' }//长度验证
         ],
       },
     };    
@@ -69,11 +69,15 @@ export default {
         const {data:res} = await this.$http.post("login",this.loginForm);//访问后台
         if(res.flag=="ok"){
           window.sessionStorage.setItem("user",res.user);//存储user对象
-          this.$message.success("操作成功!");//信息提示
-          this.$router.push({path:"/page"});//页面跳转
-          
+          this.$message.success("操作成功!");//信息提示 
+          if(res.user.root=='1'){
+            this.$router.push({path:"/page"});//页面跳转
+          }else if(res.user.root=='2'){
+            window.sessionStorage.setItem("realname",res.user.realname);
+            this.$router.push({path:"/pageOwner"});
+          }         
         }else{
-          this.$message.error("操作失败!");//错误提示
+          this.$message.error("请输入正确的账号信息/账号与密码不一致!");//错误提示
         }
       })
     },
