@@ -6,6 +6,55 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "16386809",
+      "name": "讨论",
+      "font_class": "biaoqiankuozhan_taolun-169",
+      "unicode": "eb21",
+      "unicode_decimal": 60193
+    },
+    {
+      "icon_id": "650809",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "14936297",
+      "name": "申请",
+      "font_class": "ziyuan197",
+      "unicode": "e718",
+      "unicode_decimal": 59160
+    },
+    {
+      "icon_id": "17879240",
+      "name": "通过",
+      "font_class": "tongguo1",
+      "unicode": "e6b7",
+      "unicode_decimal": 59063
+    },
+    {
+      "icon_id": "17814605",
+      "name": "隐藏",
+      "font_class": "yincang",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "1380016",
+      "name": "显示",
+      "font_class": "icon-test",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "1105646",
+      "name": "审核",
+      "font_class": "shenhe",
+      "unicode": "e616",
+      "unicode_decimal": 58902
+    },
+    {
       "icon_id": "8987889",
       "name": "美食 (1)",
       "font_class": "meishi",

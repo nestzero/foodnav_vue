@@ -3,24 +3,41 @@
     <!--用户主体部分 -->
     <el-card>
       <el-row :gutter="15">
-        <el-col :span="40" style="float:right">
-          <el-button type="primary" @click="addDialogVisibleTrue">添加菜品</el-button>
+        <el-col :span="40" style="float: right">
+          <el-button type="primary" @click="addDialogVisibleTrue"
+            >添加菜品</el-button
+          >
         </el-col>
-      </el-row>      
+      </el-row>
       <!-- 用户列表 border边框 stripe隔行变色-->
       <el-table :data="foodList" border stripe>
-      <el-table-column type="index"></el-table-column>
-      <el-table-column></el-table-column>
-      <el-table-column label="菜名" prop="foodname"></el-table-column>
-      <el-table-column label="价格" prop="price"></el-table-column>
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <!-- 修改 -->
-          <el-button type="primary" icon="el-icon-edit" size="mini" @click="showEditDialog(scope.row.fid)"></el-button>
-          <!-- 删除 -->
-          <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteFood(scope.row.fid)"></el-button>
-        </template>
-      </el-table-column>
+        <el-table-column type="index"></el-table-column>
+        <el-table-column label="菜名" prop="foodname"></el-table-column>
+        <el-table-column label="价格" prop="price"></el-table-column>
+        <el-table-column label="类型" prop="genre"></el-table-column>
+        <el-table-column
+          :formatter="stateFormat"
+          label="详述"
+          prop="content"
+        ></el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <!-- 修改 -->
+            <el-button
+              type="primary"
+              icon="el-icon-edit"
+              size="mini"
+              @click="showEditDialog(scope.row.fid)"
+            ></el-button>
+            <!-- 删除 -->
+            <el-button
+              type="danger"
+              icon="el-icon-delete"
+              size="mini"
+              @click="deleteFood(scope.row.fid)"
+            ></el-button>
+          </template>
+        </el-table-column>
       </el-table>
       <!-- 分页组件 size-change每页最大变化数 current-change当前最大变化数 layout功能组件-->
       <div>
@@ -31,23 +48,52 @@
           :page-sizes="[1, 2, 5, 100]"
           :page-size="queryInfo.pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+          :total="total"
+        >
         </el-pagination>
       </div>
       <!-- 添加菜品表单 -->
-      <el-dialog title="添加用户" :visible.sync="addDialogVisible" width="50%" @close="addDialogClosed">
-        <el-form :model="addForm" :rules="addFormRules" ref="addFormRef" label-width="70px">
+      <el-dialog
+        title="上架菜品"
+        :visible.sync="addDialogVisible"
+        width="50%"
+        @close="addDialogClosed"
+      >
+        <el-form
+          :model="addForm"
+          :rules="addFormRules"
+          ref="addFormRef"
+          label-width="70px"
+        >
           <!-- 菜名 -->
           <el-form-item label="菜名" prop="foodname">
             <el-input v-model.lazy="addForm.foodname"></el-input>
-          </el-form-item>    
+          </el-form-item>
           <!-- 价格-->
           <el-form-item label="价格" prop="price">
             <el-input v-model="addForm.price"></el-input>
           </el-form-item>
-          <!-- 昵称 -->
-          <el-form-item label="昵称" prop="realname1">
-            <el-input v-model="addForm.realname1"></el-input>
+          <!-- 菜品类型 -->
+          <el-form-item label="类型" prop="genre">
+            <el-select
+              v-model="addForm.genre"
+              placeholder="请选择该菜品所属类型"
+            >
+              <el-option label="奶茶" value="奶茶"></el-option>
+              <el-option label="芝士茶" value="芝士茶"></el-option>
+              <el-option label="水果茶" value="水果茶"></el-option>
+              <el-option label="粉面粥" value="粉面粥"></el-option>
+              <el-option label="小吃" value="小吃"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="详述" prop="content">
+            <el-input
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+              v-model="addForm.content"
+            >
+            </el-input>
           </el-form-item>
         </el-form>
         <!-- 内容底部区域 -->
@@ -57,16 +103,64 @@
         </span>
       </el-dialog>
       <!-- 修改菜品表单 -->
-      <el-dialog title="修改用户信息" :visible.sync="editDialogVisible" width="50%" @close="editDialogClosed">
-        <el-form :model="editForm" :rules="editFormRules" ref="editFormRef" label-width="70px">
-           <!-- 菜名 -->
+      <el-dialog
+        title="修改菜品信息"
+        :visible.sync="editDialogVisible"
+        width="50%"
+        @close="editDialogClosed"
+      >
+        <el-form
+          :model="editForm"
+          :rules="editFormRules"
+          ref="editFormRef"
+          label-width="70px"
+        >
+          <!-- 菜名 -->
           <el-form-item label="菜名" prop="foodname">
             <el-input v-model.lazy="editForm.foodname"></el-input>
-          </el-form-item>    
+          </el-form-item>
           <!-- 价格-->
           <el-form-item label="价格" prop="price">
             <el-input v-model="editForm.price"></el-input>
           </el-form-item>
+          <!-- 菜品类型 -->
+          <el-form-item label="类型" prop="genre">
+            <el-select
+              v-model="editForm.genre"
+              placeholder="请选择该菜品所属类型"
+            >
+              <el-option label="奶茶" value="奶茶"></el-option>
+              <el-option label="芝士茶" value="芝士茶"></el-option>
+              <el-option label="水果茶" value="水果茶"></el-option>
+              <el-option label="粉面粥" value="粉面粥"></el-option>
+              <el-option label="小吃" value="小吃"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="详述" prop="content">
+            <el-input
+              type="textarea"
+              :rows="2"
+              placeholder="请输入内容"
+              v-model="editForm.content"
+            >
+            </el-input>
+          </el-form-item>
+          <!-- 上传店铺外景 -->
+          <div>
+            <!-- 头像上传  -->
+            <el-upload
+              class="avatar-uploader"
+              :action="
+                'http://localhost:9090/uploadFoodPic?fid=' + editForm.fid
+              "
+              :show-file-list="false"
+              multiple
+              :limit="1"
+              :on-success="handleAvatarSuccess"
+              :before-upload="beforeAvatarUpload"
+            >
+            </el-upload>
+          </div>
         </el-form>
         <!-- 内容底部区域 -->
         <span slot="footer" class="dialog-footer">
@@ -79,148 +173,218 @@
 </template>
 <script>
 export default {
-  created(){
+  created() {
     this.getFoodList();
   },
-  data(){
-
-    return{
-       // 查询信息实体
-      queryInfo:{
-        pageNum: 1,//当前页
-        pageSize: 5,//每页最大数
+  data() {
+    return {
+      // 查询信息实体
+      queryInfo: {
+        pageNum: 1, //当前页
+        pageSize: 5, //每页最大数
       },
-      foodList:[],//菜品列表
-      total:0,//总记录数
-      addDialogVisible:false, //对话框状态
+      foodList: [], //菜品列表
+      total: 0, //总记录数
+      addDialogVisible: false, //对话框状态
       //添加表单信息
-      addForm:{
-        foodname:'',
-        price:'',
-        realname1:'',
+      addForm: {
+        foodname: "",
+        price: "",
+        realname1: "",
+        genre: "",
       },
       // 添加用户表单验证
       addFormRules: {
         foodname: [
-          { required: true,message:'请输入菜名',trigger: 'blur'},
-          { min: 1, max: 12, message: '长度在 1 到 12 个字符', trigger: 'blur' },
+          { required: true, message: "请输入菜名", trigger: "blur" },
+          {
+            min: 1,
+            max: 12,
+            message: "长度在 1 到 12 个字符",
+            trigger: "blur",
+          },
         ],
         price: [
-          { required: true, message: '请输入价格', trigger: 'blur'},
-          { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' },
+          { required: true, message: "请输入价格", trigger: "blur" },
+          { min: 1, max: 5, message: "长度在 1 到 5 个字符", trigger: "blur" },
         ],
-        realname1:[
-          { required: true, message: '请输入商铺昵称', trigger: 'blur'},
-        ]
+        content: [
+          { required: true, message: "请输入菜品详述", trigger: "blur" },
+          {
+            min: 1,
+            max: 200,
+            message: "长度在 1 到 200 个字符",
+            trigger: "blur",
+          },
+        ],
       },
-       // 修改菜品信息
-      editForm:{},
+      // 修改菜品信息
+      editForm: {},
       //显示或隐藏修改菜品栏
-      editDialogVisible:false,
-       //修改菜品表单验证
-      editFormRules: {         
-          foodname: [
-            { required: true, message: '请输入菜名', trigger: 'blur' },
-            { min: 1, max: 12, message: '长度在 1 到 12 个字符', trigger: 'blur' },
-          ],
-          price:[
-            {required:true,message:'请输入价格',trigger:'blur'},
-            { min: 1, max: 5, message: '长度在 1 到 5 个字符', trigger: 'blur' },
-          ]
-      }
-    }
+      editDialogVisible: false,
+      //修改菜品表单验证
+      editFormRules: {
+        foodname: [
+          { required: true, message: "请输入菜名", trigger: "blur" },
+          {
+            min: 1,
+            max: 12,
+            message: "长度在 1 到 12 个字符",
+            trigger: "blur",
+          },
+        ],
+        price: [
+          { required: true, message: "请输入价格", trigger: "blur" },
+          { min: 1, max: 7, message: "长度在 1 到 7 个字符", trigger: "blur" },
+        ],
+        content: [
+          { required: true, message: "请输入菜品详述", trigger: "blur" },
+          {
+            min: 1,
+            max: 210,
+            message: "长度在 1 到 210 个字符",
+            trigger: "blur",
+          },
+        ],
+      },
+      //外景上传
+      headers: {
+        authorization: "authorization-text",
+      },
+      filename: "",
+    };
   },
-  methods:{
+  methods: {
     // 获取相应菜品列表
-    async getFoodList(){
-      const {data:res}= await this.$http.post("allFood?realname1="+window.sessionStorage.getItem("realname")+
-                                              "&pageStart="+this.queryInfo.pageNum+
-                                              "&pageSize="+this.queryInfo.pageSize);
-      this.foodList=res.data;
-      this.total=res.numbers;
+    async getFoodList() {
+      const { data: res } = await this.$http.post(
+        "allFood?realname1=" +
+          window.sessionStorage.getItem("realname") +
+          "&pageStart=" +
+          this.queryInfo.pageNum +
+          "&pageSize=" +
+          this.queryInfo.pageSize
+      );
+      this.foodList = res.data;
+      this.total = res.numbers;
     },
-     // 最大数
-    handleSizeChange(newSize){
-      this.queryInfo.pageSize=newSize;
+    // 最大数
+    handleSizeChange(newSize) {
+      this.queryInfo.pageSize = newSize;
       this.getFoodList();
     },
     // pageNum的触发功能
-    handleCurrentChange(newPage){
-      this.queryInfo.pageNum=newPage;
+    handleCurrentChange(newPage) {
+      this.queryInfo.pageNum = newPage;
       this.getFoodList();
     },
     //改变添加对话框状态
-    addDialogVisibleTrue(){
-      console.log(window.sessionStorage.getItem("realname"));
-      this.addDialogVisible=true;
+    addDialogVisibleTrue() {
+      this.addDialogVisible = true;
     },
     //监听添加用户
-    addDialogClosed(){
+    addDialogClosed() {
       this.$refs.addFormRef.resetFields();
     },
     // 添加菜品
-    addFood(){
-      if(this.addForm.realname1!=window.sessionStorage.getItem("realname")){
-        return this.$message.error("请输入自己的商铺名称")
-      }else{
-          this.$refs.addFormRef.validate(async valid=>{
-          if(!valid) return;
-          const {data:res} = await this.$http.post("addFood",this.addForm);
-          if(res!="success"){
+    addFood() {
+      this.addForm.realname1 = window.sessionStorage.getItem("realname");
+      if (this.addForm.realname1 != window.sessionStorage.getItem("realname")) {
+        return this.$message.error("请输入自己的商铺名称");
+      } else {
+        this.$refs.addFormRef.validate(async (valid) => {
+          if (!valid) return;
+
+          const { data: res } = await this.$http.post("addFood", this.addForm);
+          if (res != "success") {
             return this.$message.error("操作失败!");
           }
           this.$message.success("操作成功!");
-          this.addDialogVisible=false;
+          this.addDialogVisible = false;
           this.getFoodList();
-        });    
+        });
       }
-      
     },
     // 根据fid删除菜品
-    async deleteFood(fid){
-      const confirmResult = await this.$confirm('此操作将永久删除菜品，是否继续?','提示',{
-        confirmButtonText:'确定',
-        cancelButtonText:'取消',
-        type:'warning'
-      }).catch(err => err)
+    async deleteFood(fid) {
+      const confirmResult = await this.$confirm(
+        "此操作将永久删除菜品，是否继续?",
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        }
+      ).catch((err) => err);
       // 取消
-      if(confirmResult!='confirm'){
+      if (confirmResult != "confirm") {
         return this.$message.Info("已取消删除!");
       }
-      const {data:res}=await this.$http.delete("deleteFood?fid="+fid);
-      if(res !="success"){
+      const { data: res } = await this.$http.delete("deleteFood?fid=" + fid);
+      if (res != "success") {
         return this.$message.error("删除失败!");
       }
       this.$message.success("删除成功!");
       this.getFoodList();
     },
     // 显示对话框
-    async showEditDialog(fid){
-      const {data:res} =await this.$http.get("/getUpdateFood?fid="+fid);
-      this.editForm=res;//查询出菜品信息反填回编辑表单中
-      this.editDialogVisible=true;//开启编辑对话框
+    async showEditDialog(fid) {
+      const { data: res } = await this.$http.get(
+        "/getUpdateFoodForm?fid=" + fid
+      );
+      this.editForm = null;
+      this.editForm = res; //查询出菜品信息反填回编辑表单中
+      this.editDialogVisible = true; //开启编辑对话框
     },
     // 关闭窗口
-    editDialogClosed(){
-      this.$refs.editFormRef.resetFields();//重置信息
+    editDialogClosed() {
+      this.$refs.editFormRef.resetFields(); //重置信息
     },
     // 确认修改
-    editFoodInfo(){
-      this.$refs.editFormRef.validate(async valid =>{
-        if(!valid) return;
+    editFoodInfo() {
+      this.$refs.editFormRef.validate(async (valid) => {
+        if (!valid) return;
         //发起修改请求
-        const {data:res} = await this.$http.post("editFood",this.editForm);
-        
-        if(res!="success")return this.$message.error("操作失败!");
+        const { data: res } = await this.$http.post("editFood", this.editForm);
+
+        if (res != "success") return this.$message.error("操作失败!");
         this.$message.success("操作成功!");
         //隐藏修改对话框
-        this.editDialogVisible=false;
-        this.getFoodList(); 
-      })
+        this.editDialogVisible = false;
+        this.getFoodList();
+      });
     },
-  }
-}
+    handleAvatarSuccess(res) {
+      // 把图片名给img
+      this.filename = res;
+    },
+    beforeAvatarUpload(file) {
+      // 设置限定格式
+      const img_mimetype = ["image/jpeg", "image/jpg", "image/png"];
+      const isJPG = img_mimetype.includes(file.type);
+      const isLt2M = file.size / 1024 / 1024 < 2;
+      if (!isJPG) {
+        this.$message.error("上传头像只能是图片格式!");
+        return false;
+      }
+      if (!isLt2M) {
+        this.$message.error("上传头像图片大小不能超过 2MB!");
+        return false;
+      }
+      return isJPG && isLt2M;
+    },
+    // 格式化表格消息内容
+    stateFormat(row, column, cellValue) {
+      // console.log(row , column , cellValue)
+      if (!cellValue) return "";
+      if (cellValue.length > 8) {
+        //最长固定显示4个字符
+        return cellValue.slice(0, 8) + "...";
+      }
+      return cellValue;
+    },
+  },
+};
 </script>
 <style lang="less" scoped>
-
 </style>
